@@ -1,9 +1,7 @@
+import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
-import ReactDOM from "react-dom/client";
 import ContainerPage from "./pages/container.page";
-
-import "./index.css"; // Import your global styles
 
 const router = createBrowserRouter([
   {
@@ -12,10 +10,15 @@ const router = createBrowserRouter([
   },
 ]);
 
-const root = document.getElementById("root");
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { store } from "./store";
+import { Provider } from "react-redux";
 
-if (root) {
-  ReactDOM.createRoot(root).render(<RouterProvider router={router} />);
-} else {
-  throw new Error("Root element not found");
-}
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
+  </StrictMode>
+);

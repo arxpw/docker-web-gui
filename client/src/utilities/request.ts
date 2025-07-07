@@ -1,5 +1,7 @@
 import axios from "axios";
-export const restPath = "/api/";
+
+// wip, will replace with env
+export const restPath = "http://localhost:3230/api";
 
 export const request = (method: string, path: string, data = {}) => {
   const options = {

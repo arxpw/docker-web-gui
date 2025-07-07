@@ -1,7 +1,28 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { request } from "../../utilities/request";
+
+type Container = {
+  Id: string;
+  shortId: string;
+  Created: string;
+  State: {
+    Status: "running" | "other" | "stopped";
+    Running: boolean;
+    Paused: boolean;
+    Restarting: boolean;
+    OOMKilled: boolean;
+    Dead: boolean;
+    Pid: number;
+    ExitCode: number;
+    Error: string;
+    StartedAt: string;
+    FinishedAt: string;
+  };
+  Name: string;
+};
 
 interface ContainerState {
-  containers: any[];
+  containers: Container[];
   loading: boolean;
   containerListLoading: boolean;
   pageError: boolean;
@@ -29,17 +50,17 @@ const initialState: ContainerState = {
 export const getContainers = createAsyncThunk(
   "containers/fetchByIdStatus",
   async (status: string, thunkAPI) => {
-    const response = await fetch(`/api/container/fetch?status=${status}`, {});
+    const response = await request("get", `/container/fetch?status=${status}`);
 
-    if (!response.ok) {
+    if (response.status !== 200) {
       return thunkAPI.rejectWithValue("Failed to fetch containers");
     }
 
-    return await response.json();
+    return await response.data;
   }
 );
 
-export const containerReducer = createSlice({
+const containerSlice = createSlice({
   name: "containers",
   initialState,
   reducers: {},
@@ -59,9 +80,11 @@ export const containerReducer = createSlice({
   },
 });
 
-// export const { increment, decrement, incrementByAmount } = containerReducer.actions;
+// export const { increment, decrement, incrementByAmount } = containerSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 // export const selectCount = (state: RootState) => state.container.value;
 
-export default containerReducer.reducer;
+const containerReducer = containerSlice.reducer;
+
+export { containerReducer };
